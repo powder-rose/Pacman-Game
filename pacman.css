@@ -1,0 +1,8 @@
+body {
+    text-align: center;
+    overflow: hidden;
+}
+
+#board {
+    background-color: #232323;
+}
