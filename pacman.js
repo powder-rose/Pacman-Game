@@ -61,6 +61,8 @@ const foods = new Set();
 const ghosts = new Set();
 let pacman;
 
+const directions = ["U", "D", "L", "R"]
+
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
@@ -71,6 +73,11 @@ window.onload = function () {
   update();
 
   addEventListener("keyup", movePacman);
+
+  for (let ghost of ghosts.values()) {
+const newDirection = directions[Math.floor(Math.random() * 4)];
+ghost.updateDirection(newDirection);
+  }
 };
 
 // Функция загрузки карты, рендер блоков
@@ -118,25 +125,25 @@ function loadImages() {
   wallImage.src = "./assets/wall.png";
 
   blueGhostImage = new Image();
-  blueGhostImage.src = "../assets/blueGhost.png";
+  blueGhostImage.src = "./assets/blueGhost.png";
 
   orangeGhostImage = new Image();
-  orangeGhostImage.src = "../assets/orangeGhost.png";
+  orangeGhostImage.src = "./assets/orangeGhost.png";
 
   pinkGhostImage = new Image();
-  pinkGhostImage.src = "../assets/pinkGhost.png";
+  pinkGhostImage.src = "./assets/pinkGhost.png";
 
   redGhostImage = new Image();
-  redGhostImage.src = "../assets/redGhost.png";
+  redGhostImage.src = "./assets/redGhost.png";
 
   pacmanUpImage = new Image();
-  pacmanUpImage.src = "../assets/pacmanUp.png";
+  pacmanUpImage.src = "./assets/pacmanUp.png";
   pacmanDownImage = new Image();
-  pacmanDownImage.src = "../assets/pacmanDown.png";
+  pacmanDownImage.src = "./assets/pacmanDown.png";
   pacmanLeftImage = new Image();
-  pacmanLeftImage.src = "../assets/pacmanLeft.png";
+  pacmanLeftImage.src = "./assets/pacmanLeft.png";
   pacmanRightImage = new Image();
-  pacmanRightImage.src = "../assets/pacmanRight.png";
+  pacmanRightImage.src = "./assets/pacmanRight.png";
 }
 
 function update() {
@@ -178,6 +185,20 @@ function move() {
           break;
       }
   }
+
+  for (let ghost of ghosts.values()) {
+    ghost.x += ghost.velocityX;
+    ghost.y += ghost.velocityY;
+    for (let wall of walls.values()) {
+      if (collision(ghost, wall)){
+        ghost.x -= ghost.velocityX;
+        ghost.y -= ghost.velocityY;
+        const newDirection = directions[Math.floor(Math.random() * 4)]
+        ghost.updateDirection(newDirection);
+      }
+
+    }
+  }
 }
 
 // Назначение клавиш на движение пакмана
@@ -190,6 +211,17 @@ function movePacman(event) {
     pacman.updateDirection("L");
   } else if (event.code === "ArrowRight" || event.code === "KeyD") {
     pacman.updateDirection("R");
+  }
+
+  // Меняем изображения в зависимости от направления пакмана
+  if (pacman.direction === "U") {
+    pacman.image = pacmanUpImage;
+  } else if (pacman.direction === "D") {
+    pacman.image = pacmanDownImage;
+  } else if (pacman.direction === "R") {
+    pacman.image = pacmanRightImage;
+  } else if (pacman.direction === "L") {
+    pacman.image = pacmanLeftImage;
   }
 }
 
@@ -220,8 +252,21 @@ class Block {
 
   // Обновление траектории
   updateDirection(direction) {
+    const prevDirection = this.direction;
     this.direction = direction;
     this.updateVelocity();
+    this.x += this.velocityX;
+    this.y += this.velocityY;
+
+    for (let wall of walls.values()) {
+      if (collision(this, wall)){
+        this.x -= this.velocityX;
+        this.y -= this.velocityY;
+        this.direction = prevDirection;
+        this.updateVelocity();
+        return
+      }
+    }
   }
 
   // Обновление движения
