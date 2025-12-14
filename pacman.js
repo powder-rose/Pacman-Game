@@ -66,7 +66,6 @@ let score = 0;
 let lives = 3;
 let gameOver = false;
 
-
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
@@ -79,8 +78,8 @@ window.onload = function () {
   addEventListener("keyup", movePacman);
 
   for (let ghost of ghosts.values()) {
-const newDirection = directions[Math.floor(Math.random() * 4)];
-ghost.updateDirection(newDirection);
+    const newDirection = directions[Math.floor(Math.random() * 4)];
+    ghost.updateDirection(newDirection);
   }
 };
 
@@ -161,7 +160,7 @@ function update() {
 
 // Отрисовка компонентов: призраки, стены, еда
 function draw() {
-    context.clearRect(0, 0, board.width, board.height);
+  context.clearRect(0, 0, board.width, board.height);
   context.drawImage(
     pacman.image,
     pacman.x,
@@ -184,9 +183,13 @@ function draw() {
   context.fillStyle = "white";
   context.font = "20px Verdana, Geneva, sans-serif";
   if (gameOver) {
-    context.fillText("Game Over " + String(score), tileSize / 2, tileSize /2);
+    context.fillText("Game Over " + String(score), tileSize / 2, tileSize / 2);
   } else {
-    context.fillText("x" + String(lives) + " " + String(score), tileSize / 2, tileSize /2);
+    context.fillText(
+      "x" + String(lives) + " " + String(score),
+      tileSize / 2,
+      tileSize / 2,
+    );
   }
 }
 // Функция движения
@@ -247,7 +250,7 @@ function move() {
   // Новый уровень
   if (foods.size === 0) {
     loadMap();
-    resetPositions()
+    resetPositions();
   }
 }
 
@@ -284,11 +287,13 @@ function movePacman(event) {
 }
 
 // Коллизия стен и позиционирование углов
-function collision (a, b) {
-    return a.x < b.x + b.width &&
-        a.x + a.width > b.x &&
-        a.y < b.y + b.height &&
-        a.y + a.height > b.y;
+function collision(a, b) {
+  return (
+    a.x < b.x + b.width &&
+    a.x + a.width > b.x &&
+    a.y < b.y + b.height &&
+    a.y + a.height > b.y
+  );
 }
 // Ресет позиций для призраков и пакмана
 function resetPositions() {
@@ -328,12 +333,12 @@ class Block {
     this.y += this.velocityY;
 
     for (let wall of walls.values()) {
-      if (collision(this, wall)){
+      if (collision(this, wall)) {
         this.x -= this.velocityX;
         this.y -= this.velocityY;
         this.direction = prevDirection;
         this.updateVelocity();
-        return
+        return;
       }
     }
   }
@@ -354,7 +359,7 @@ class Block {
       this.velocityY = 0;
     }
   }
-// Ресет позиции пакмана
+  // Ресет позиции пакмана
   reset() {
     this.x = this.startX;
     this.y = this.startY;
