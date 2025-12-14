@@ -61,7 +61,11 @@ const foods = new Set();
 const ghosts = new Set();
 let pacman;
 
-const directions = ["U", "D", "L", "R"]
+const directions = ["U", "D", "L", "R"];
+let score = 0;
+let lives = 3;
+let gameOver = false;
+
 
 window.onload = function () {
   board = document.getElementById("board");
@@ -147,6 +151,9 @@ function loadImages() {
 }
 
 function update() {
+  if (gameOver) {
+    return;
+  }
   move();
   draw();
   setTimeout(update, 50);
@@ -172,41 +179,88 @@ function draw() {
   for (let food of foods.values()) {
     context.fillRect(food.x, food.y, food.width, food.height);
   }
+
+  // Счет
+  context.fillStyle = "white";
+  context.font = "20px Verdana, Geneva, sans-serif";
+  if (gameOver) {
+    context.fillText("Game Over " + String(score), tileSize / 2, tileSize /2);
+  } else {
+    context.fillText("x" + String(lives) + " " + String(score), tileSize / 2, tileSize /2);
+  }
 }
-// Функция движения пакмана
+// Функция движения
 function move() {
   pacman.x += pacman.velocityX;
   pacman.y += pacman.velocityY;
 
   for (let wall of walls.values()) {
-      if (collision(pacman, wall)){
-          pacman.x -= pacman.velocityX;
-          pacman.y -= pacman.velocityY;
-          break;
-      }
+    if (collision(pacman, wall)) {
+      pacman.x -= pacman.velocityX;
+      pacman.y -= pacman.velocityY;
+      break;
+    }
   }
 
   for (let ghost of ghosts.values()) {
+    if (collision(ghost, pacman)) {
+      lives -= 1;
+      if (lives === 0) {
+        gameOver = true;
+        return;
+      }
+      resetPositions();
+    }
     ghost.x += ghost.velocityX;
     ghost.y += ghost.velocityY;
 
-    if (ghost.y === tileSize*9 && ghost.direction !== "U" && ghost.direction !== "D") {
-      ghost.updateDirection("U")
+    if (
+      ghost.y === tileSize * 9 &&
+      ghost.direction !== "U" &&
+      ghost.direction !== "D"
+    ) {
+      ghost.updateDirection("U");
     }
     for (let wall of walls.values()) {
-      if (collision(ghost, wall) || ghost.x <= 0 || ghost.x + ghost.width >= boardWidth) {
+      if (
+        collision(ghost, wall) ||
+        ghost.x <= 0 ||
+        ghost.x + ghost.width >= boardWidth
+      ) {
         ghost.x -= ghost.velocityX;
         ghost.y -= ghost.velocityY;
-        const newDirection = directions[Math.floor(Math.random() * 4)]
+        const newDirection = directions[Math.floor(Math.random() * 4)];
         ghost.updateDirection(newDirection);
       }
-
     }
+  }
+  // Коллизия еды
+  let foodEaten = null;
+  for (let food of foods.values()) {
+    if (collision(pacman, food)) {
+      foodEaten = food;
+      score += 10;
+      break;
+    }
+  }
+  foods.delete(foodEaten);
+  // Новый уровень
+  if (foods.size === 0) {
+    loadMap();
+    resetPositions()
   }
 }
 
 // Назначение клавиш на движение пакмана
 function movePacman(event) {
+  if (gameOver) {
+    loadMap();
+    resetPositions();
+    lives = 3;
+    score = 0;
+    gameOver = false;
+    update(); // Рестарт игры
+  }
   if (event.code === "ArrowUp" || event.code === "KeyW") {
     pacman.updateDirection("U");
   } else if (event.code === "ArrowDown" || event.code === "KeyS") {
@@ -235,6 +289,17 @@ function collision (a, b) {
         a.x + a.width > b.x &&
         a.y < b.y + b.height &&
         a.y + a.height > b.y;
+}
+// Ресет позиций для призраков и пакмана
+function resetPositions() {
+  pacman.reset();
+  pacman.velocityX = 0;
+  pacman.velocityY = 0;
+  for (let ghost of ghosts.values()) {
+    ghost.reset();
+    const newDirection = directions[Math.floor(Math.random() * 4)];
+    ghost.updateDirection(newDirection);
+  }
 }
 
 // Класс создания блоков и методы направления и движения пакмана
@@ -288,5 +353,10 @@ class Block {
       this.velocityX = tileSize / 4;
       this.velocityY = 0;
     }
+  }
+// Ресет позиции пакмана
+  reset() {
+    this.x = this.startX;
+    this.y = this.startY;
   }
 }
