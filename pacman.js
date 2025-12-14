@@ -122,28 +122,28 @@ function loadMap() {
 // Функция загрузки изображений
 function loadImages() {
   wallImage = new Image();
-  wallImage.src = "./assets/wall.png";
+  wallImage.src = "../assets/wall.png";
 
   blueGhostImage = new Image();
-  blueGhostImage.src = "./assets/blueGhost.png";
+  blueGhostImage.src = "../assets/blueGhost.png";
 
   orangeGhostImage = new Image();
-  orangeGhostImage.src = "./assets/orangeGhost.png";
+  orangeGhostImage.src = "../assets/orangeGhost.png";
 
   pinkGhostImage = new Image();
-  pinkGhostImage.src = "./assets/pinkGhost.png";
+  pinkGhostImage.src = "../assets/pinkGhost.png";
 
   redGhostImage = new Image();
-  redGhostImage.src = "./assets/redGhost.png";
+  redGhostImage.src = "../assets/redGhost.png";
 
   pacmanUpImage = new Image();
-  pacmanUpImage.src = "./assets/pacmanUp.png";
+  pacmanUpImage.src = "../assets/pacmanUp.png";
   pacmanDownImage = new Image();
-  pacmanDownImage.src = "./assets/pacmanDown.png";
+  pacmanDownImage.src = "../assets/pacmanDown.png";
   pacmanLeftImage = new Image();
-  pacmanLeftImage.src = "./assets/pacmanLeft.png";
+  pacmanLeftImage.src = "../assets/pacmanLeft.png";
   pacmanRightImage = new Image();
-  pacmanRightImage.src = "./assets/pacmanRight.png";
+  pacmanRightImage.src = "../assets/pacmanRight.png";
 }
 
 function update() {
