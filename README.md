@@ -20,7 +20,7 @@ git clone https://github.com/powder-rose/Pacman-Game.git
 
 
 ## Превью:
-<img width="604" height="667" alt="image" src="https://i.ibb.co/jkKNFvD9/pacman-online-video-cutter-com.gif" />
+<img width="400" height="450" alt="image" src="https://i.ibb.co/jkKNFvD9/pacman-online-video-cutter-com.gif" />
 
 ## Github pages: 
 https://powder-rose.github.io/Pacman-Game/
